@@ -1,11 +1,10 @@
-const ready = () => {
-  new Circle(100, purple).center().drag();
-};
+const ready = () => {};
+
 new Frame({
   scaling: FIT,
-  width: 1024,
-  height: 768,
-  color: light,
-  outerColor: dark,
+  width: 720,
+  height: 1280,
+  color: black,
+  outerColor: darker,
   ready,
 });
