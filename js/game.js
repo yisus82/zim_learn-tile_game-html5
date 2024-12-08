@@ -52,6 +52,22 @@ const ready = () => {
     // Otherwise, set its frame to the corresponding frame from the options array
     pod.frame = eternalsFrames[eternalsTileIndexes.indexOf(i)] ?? options[i];
   });
+
+  interval({
+    // Time in seconds
+    time: 1,
+    immediate: true,
+    call: () => {
+      shuffle(options);
+      // Loop through all the pods and set the frame
+      pods.loop((pod, i) => {
+        // If the pod with index i is an eternal, set the frame to the eternal frame
+        // Otherwise, set its frame to the corresponding frame from the options array
+        pod.frame = eternalsFrames[eternalsTileIndexes.indexOf(i)] ?? options[i];
+      });
+      S.update();
+    },
+  });
 };
 
 new Frame({
