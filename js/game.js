@@ -19,9 +19,15 @@ const ready = () => {
   })
     .scaleTo(S, 95, 95)
     .center();
-  // loop through all the pods and set its frame to a random number
-  pods.loop(pod => {
-    pod.frame = rand(99);
+  const options = [];
+  loop(100, i => {
+    options.push(i);
+  });
+  // Randomize the frame options
+  shuffle(options);
+  // Loop through all the pods and set the frame
+  pods.loop((pod, i) => {
+    pod.frame = options[i];
   });
 };
 
