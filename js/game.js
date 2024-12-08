@@ -43,15 +43,9 @@ const ready = () => {
   loop(cols * rows, i => {
     allTileIndexes.push(i);
   });
+
   // Get two random spots for the eternals
   const eternalsTileIndexes = shuffle(allTileIndexes).splice(0, numEternals);
-
-  // Loop through all the pods and set the frame
-  pods.loop((pod, i) => {
-    // If the pod with index i is an eternal, set the frame to the eternal frame
-    // Otherwise, set its frame to the corresponding frame from the options array
-    pod.frame = eternalsFrames[eternalsTileIndexes.indexOf(i)] ?? options[i];
-  });
 
   interval({
     // Time in seconds
