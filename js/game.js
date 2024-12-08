@@ -2,14 +2,20 @@ const assets = ['plasmapods.jpg'];
 const path = 'https://zimjs.org/assets/';
 
 const ready = () => {
-  // Pods
+  // Pods sprite sheet
   const pod = new Sprite({
     image: 'plasmapods.jpg',
     cols: 10,
     rows: 10,
   }).reg(CENTER);
+
+  // Level variables
+  const level = 0;
+  const numEternals = level + 2;
   const cols = 4;
   const rows = 5;
+
+  // Create the pods grid
   const pods = new Tile({
     obj: pod,
     cols,
@@ -19,15 +25,34 @@ const ready = () => {
   })
     .scaleTo(S, 95, 95)
     .center();
+
+  // Create the frame options
   const options = [];
   loop(100, i => {
     options.push(i);
   });
+
   // Randomize the frame options
   shuffle(options);
+
+  // Take some frames out of the options to use as eternals
+  const eternalsFrames = options.splice(0, numEternals);
+
+  // Create all available tile indexes
+  const allTileIndexes = [];
+  loop(cols * rows, i => {
+    allTileIndexes.push(i);
+  });
+  // Get two random spots for the eternals
+  const eternalsTileIndexes = shuffle(allTileIndexes).splice(0, numEternals);
+
   // Loop through all the pods and set the frame
   pods.loop((pod, i) => {
     pod.frame = options[i];
+    // If the pod with index i is an eternal, overwrite its frame with an eternal frame
+    if (i in eternalsTileIndexes) {
+      pod.frame = eternalsFrames[eternalsTileIndexes.indexOf(i)];
+    }
   });
 };
 
