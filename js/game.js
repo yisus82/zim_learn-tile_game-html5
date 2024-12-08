@@ -48,11 +48,9 @@ const ready = () => {
 
   // Loop through all the pods and set the frame
   pods.loop((pod, i) => {
-    pod.frame = options[i];
-    // If the pod with index i is an eternal, overwrite its frame with an eternal frame
-    if (i in eternalsTileIndexes) {
-      pod.frame = eternalsFrames[eternalsTileIndexes.indexOf(i)];
-    }
+    // If the pod with index i is an eternal, set the frame to the eternal frame
+    // Otherwise, set its frame to the corresponding frame from the options array
+    pod.frame = eternalsFrames[eternalsTileIndexes.indexOf(i)] ?? options[i];
   });
 };
 
