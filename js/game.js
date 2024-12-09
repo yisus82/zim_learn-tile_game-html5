@@ -7,9 +7,7 @@ const ready = () => {
     image: 'plasmapods.jpg',
     cols: 10,
     rows: 10,
-  })
-    .reg(CENTER)
-    .cur();
+  }).reg(CENTER);
 
   // Level variables
   const level = 0;
@@ -26,7 +24,8 @@ const ready = () => {
     spacingV: 10,
   })
     .scaleTo(S, 95, 95)
-    .center();
+    .center()
+    .cur();
 
   // Create the frame options
   const options = [];
