@@ -7,7 +7,9 @@ const ready = () => {
     image: 'plasmapods.jpg',
     cols: 10,
     rows: 10,
-  }).reg(CENTER);
+  })
+    .reg(CENTER)
+    .cur();
 
   // Level variables
   const level = 0;
@@ -46,6 +48,24 @@ const ready = () => {
 
   // Get two random spots for the eternals
   const eternalsTileIndexes = shuffle(allTileIndexes).splice(0, numEternals);
+
+  // Mouse down event to select pods
+  pods.on('mousedown', event => {
+    if (eternalsTileIndexes.includes(event.target.tileNum)) {
+      // Outline the selected pod
+      // We have to scale the circles because they are global, not inside scaled tile
+      new Circle({
+        radius: (event.target.width / 2) * pods.scale,
+        color: clear,
+        borderColor: white,
+        borderWidth: 18,
+        dashed: true,
+      }).loc(event.target);
+    } else {
+      // Just do something for now...
+      event.target.sca(0.5);
+    }
+  });
 
   interval({
     // Time in seconds
