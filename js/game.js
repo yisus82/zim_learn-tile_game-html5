@@ -1,7 +1,17 @@
+// Assets to load
 const assets = ['plasmapods.jpg'];
 const path = 'https://zimjs.org/assets/';
 
-const ready = () => {
+// Level sizes
+const levelSizes = [
+  [4, 5],
+  [5, 7],
+  [6, 8],
+  [7, 10],
+  [8, 11],
+];
+
+const makeLevel = (currentLevel = 0) => {
   // Pods sprite sheet
   const pod = new Sprite({
     image: 'plasmapods.jpg',
@@ -9,13 +19,8 @@ const ready = () => {
     rows: 10,
   }).reg(CENTER);
 
-  // Level variables
-  const level = 0;
-  const numEternals = level + 2;
-  const cols = 4;
-  const rows = 5;
-
   // Create the pods grid
+  const [cols, rows] = levelSizes[currentLevel];
   const pods = new Tile({
     obj: pod,
     cols,
@@ -37,6 +42,7 @@ const ready = () => {
   shuffle(options);
 
   // Take some frames out of the options to use as eternals
+  const numEternals = currentLevel + 2;
   const eternalsFrames = options.splice(0, numEternals);
 
   // Create all available tile indexes
@@ -79,6 +85,7 @@ const ready = () => {
     }
   });
 
+  // Change pods positions every second
   interval({
     // Time in seconds
     time: 1,
@@ -94,6 +101,10 @@ const ready = () => {
       S.update();
     },
   });
+};
+
+const ready = () => {
+  makeLevel();
 };
 
 new Frame({
