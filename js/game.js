@@ -48,6 +48,9 @@ const ready = () => {
   // Get two random spots for the eternals
   const eternalsTileIndexes = shuffle(allTileIndexes).splice(0, numEternals);
 
+  // Create a set to store the correct pods
+  const correctPods = new Set();
+
   // Mouse down event to select pods
   pods.on('mousedown', event => {
     if (eternalsTileIndexes.includes(event.target.tileNum)) {
@@ -60,6 +63,16 @@ const ready = () => {
         borderWidth: 18,
         dashed: true,
       }).loc(event.target);
+
+      // Add the pod to the correct pods set
+      correctPods.add(event.target);
+      console.log(correctPods);
+      // If we have selected all the correct pods, do something
+      if (correctPods.size === numEternals) {
+        pods.loop(pod => {
+          pod.removeFrom();
+        }, true);
+      }
     } else {
       // Just do something for now...
       event.target.sca(0.5);
