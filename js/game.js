@@ -66,7 +66,7 @@ const ready = () => {
 
       // Add the pod to the correct pods set
       correctPods.add(event.target);
-      console.log(correctPods);
+
       // If we have selected all the correct pods, do something
       if (correctPods.size === numEternals) {
         pods.loop(pod => {
