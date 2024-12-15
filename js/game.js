@@ -255,7 +255,34 @@ const makeLevel = (level = 0) => {
 };
 
 const ready = () => {
-  makeLevel();
+  // Leader board
+  const leaderBoard = new LeaderBoard({
+    corner: 0,
+    backgroundColor: dark,
+    titleColor: light,
+    title: 'Lowest Finish Times',
+    reverse: true,
+  })
+    .scaleTo(S, 90, 90)
+    .center()
+    .mov(0, 20);
+
+  // Play button
+  const play = new Button({
+    label: 'PLAY',
+    backgroundColor: new GradientColor([orange, purple], 90),
+  })
+    .pos(0, 40, CENTER, BOTTOM)
+    .tap(() => {
+      leaderBoard.removeFrom();
+      play.removeFrom();
+      makeLevel();
+    });
+
+  leaderBoard.on('close', () => {
+    play.removeFrom();
+    makeLevel();
+  });
 };
 
 new Frame({
