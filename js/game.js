@@ -1,5 +1,22 @@
 // Assets to load
-const assets = ['plasmapods.jpg', 'gf_Honk'];
+const audioSpriteData = {
+  src: 'audiosprite.mp3',
+  audioSprite: [
+    // [id, startime(in seconds), endtime(in seconds)]
+    ['blackball', 1.041, 2.475],
+    ['bounce', 3.567, 4.232],
+    ['end', 5.396, 9.315],
+    ['help', 10.373, 10.499],
+    ['powerdown', 11.607, 14.254],
+    ['powerup', 15.672, 17.081],
+    ['slow', 18.354, 19.163],
+    ['start', 20.151, 23.594],
+    ['submit', 24.931, 27.673],
+    ['wallend', 28.632, 29.351],
+    ['wallstart', 30.64, 32.323],
+  ],
+};
+const assets = ['plasmapods.jpg', 'gf_Honk', 'intro.mp3', audioSpriteData];
 const path = 'https://zimjs.com/assets/';
 
 // Show the progress of loading assets
@@ -13,6 +30,7 @@ const levelSizes = [
   [7, 10],
   [8, 11],
 ];
+let muted = false;
 
 // Create an emitter to use when selecting pods
 const emitter = new Emitter({
@@ -129,12 +147,51 @@ const makeLevel = (level = 0) => {
     },
   });
 
+  // Sounds
+  const backgroundSound = new Aud({
+    file: 'intro.mp3',
+    volume: 0.1,
+    loop: true,
+  });
+  const startSound = new Aud({
+    file: 'wallstart',
+    volume: 0.3,
+  });
+  const rightSound = new Aud({
+    file: 'powerup',
+    volume: 0.3,
+  });
+  const wrongSound = new Aud({
+    file: 'wallend',
+    volume: 0.3,
+  });
+  let backgroundSoundInstance = backgroundSound.play();
+  if (muted) {
+    backgroundSoundInstance.fade(0);
+  } else {
+    backgroundSoundInstance.fade(0.1);
+    startSound.play();
+  }
+
   // Bottom interface
   const mute = new Button({
     width: 80,
     backing: makeIcon('sound', orange).sca(2),
     toggleBacking: makeIcon('mute', orange).sca(2),
-  });
+  })
+    // Expand the button so it easier to tap in mobile
+    .expand()
+    .tap(() => {
+      muted = mute.toggled;
+      if (muted) {
+        backgroundSoundInstance.fade(0);
+      } else {
+        backgroundSoundInstance.fade(0.1);
+      }
+    });
+  if (muted) {
+    mute.toggle();
+  }
   const find = new Label({
     text: `Find ${numEternals}`,
     size: 85,
@@ -145,7 +202,7 @@ const makeLevel = (level = 0) => {
     down: false,
     time: 0,
   });
-  new Tile({
+  const bottom = new Tile({
     obj: [mute, find, timer],
     cols: 3,
     rows: 1,
@@ -159,8 +216,13 @@ const makeLevel = (level = 0) => {
     if (eternalsTileIndexes.includes(event.target.tileNum)) {
       // Emit particles
       emitter.loc(event.target).spurt(2);
-      // make sure the emitter particles are on top
+      // Make sure the emitter particles are on top
       emitter.particles.top();
+
+      // Play the right sound
+      if (!muted) {
+        rightSound.play();
+      }
 
       // Outline the selected pod
       // We have to scale the circles because they are global, not inside scaled tile
@@ -188,6 +250,17 @@ const makeLevel = (level = 0) => {
       if (correctPods.size === numEternals) {
         // Stop the timer
         timer.stop();
+
+        // Stop background sound
+        backgroundSoundInstance.fade(0);
+
+        // Hide bottom interface
+        bottom.animate({
+          props: {
+            alpha: 0,
+          },
+          time: 1.5,
+        });
 
         // Animate out the previous pods
         // Caching makes animating smoother on mobile
@@ -248,7 +321,11 @@ const makeLevel = (level = 0) => {
         });
       }
     } else {
-      // Just do something for now...
+      // Play the wrong sound
+      if (!muted) {
+        wrongSound.play();
+      }
+      // Make the pod smaller
       event.target.sca(0.5);
     }
   });
