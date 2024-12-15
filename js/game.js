@@ -11,6 +11,26 @@ const levelSizes = [
   [8, 11],
 ];
 
+// Create an emitter to use when selecting pods
+const emitter = new Emitter({
+  obj: new Circle({
+    radius: 90,
+    color: clear,
+    borderColor: series(pink, purple),
+    borderWidth: 18,
+    dashed: true,
+  }),
+  interval: 0.3,
+  gravity: 0,
+  force: 0,
+  animation: {
+    props: {
+      scale: 5,
+    },
+  },
+  startPaused: true,
+});
+
 /**
  * Make a level
  *
@@ -103,6 +123,11 @@ const makeLevel = (level = 0) => {
   // Mouse down event to select pods
   pods.on('mousedown', event => {
     if (eternalsTileIndexes.includes(event.target.tileNum)) {
+      // Emit particles
+      emitter.loc(event.target).spurt(2);
+      // make sure the emitter particles are on top
+      emitter.particles.top();
+
       // Outline the selected pod
       // We have to scale the circles because they are global, not inside scaled tile
       new Circle({
@@ -111,10 +136,16 @@ const makeLevel = (level = 0) => {
         borderColor: white,
         borderWidth: 18,
         dashed: true,
-      }).loc({
-        target: event.target,
-        container: rings,
-      });
+      })
+        .loc({
+          target: event.target,
+          container: rings,
+        })
+        .alp(0)
+        .animate({
+          wait: 0.5,
+          alpha: 0.9,
+        });
 
       // Add the pod to the correct pods set
       correctPods.add(event.target);
