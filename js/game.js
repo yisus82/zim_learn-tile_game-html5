@@ -81,7 +81,6 @@ const makeLevel = (level = 0) => {
 
   // Animate the pods in
   pods.alp(0).animate({
-    wait: level === 0 ? 0 : 3.5,
     props: {
       alpha: 1,
     },
@@ -130,6 +129,31 @@ const makeLevel = (level = 0) => {
     },
   });
 
+  // Bottom interface
+  const mute = new Button({
+    width: 80,
+    backing: makeIcon('sound', orange).sca(2),
+    toggleBacking: makeIcon('mute', orange).sca(2),
+  });
+  const find = new Label({
+    text: `Find ${numEternals}`,
+    size: 85,
+    font: 'Honk',
+  });
+  const timer = new Timer({
+    backgroundColor: new GradientColor([yellow, red], 90),
+    down: false,
+    time: 0,
+  });
+  new Tile({
+    obj: [mute, find, timer],
+    cols: 3,
+    rows: 1,
+    spacingH: 80,
+    spacingV: 0,
+    unique: true,
+  }).pos(0, 40, CENTER, BOTTOM);
+
   // Mouse down event to select pods
   pods.on('mousedown', event => {
     if (eternalsTileIndexes.includes(event.target.tileNum)) {
@@ -162,6 +186,9 @@ const makeLevel = (level = 0) => {
 
       // If we have selected all the correct pods, do something
       if (correctPods.size === numEternals) {
+        // Stop the timer
+        timer.stop();
+
         // Animate out the previous pods
         // Caching makes animating smoother on mobile
         pods.cache().animate({
@@ -200,6 +227,8 @@ const makeLevel = (level = 0) => {
           rewind: true,
           call: target => {
             target.dispose();
+            // Advance to the next level
+            makeLevel(level + 1);
           },
         });
 
@@ -217,9 +246,6 @@ const makeLevel = (level = 0) => {
             rings.removeAllChildren();
           },
         });
-
-        // Advance to the next level
-        makeLevel(level + 1);
       }
     } else {
       // Just do something for now...
