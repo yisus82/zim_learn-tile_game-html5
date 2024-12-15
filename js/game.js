@@ -64,13 +64,6 @@ const makeLevel = (level = 0) => {
     return;
   }
 
-  // Create the title
-  new Label({
-    text: 'ETERNAL ORBS',
-    size: 110,
-    font: 'Honk',
-  }).pos(0, 50, CENTER);
-
   // Pods sprite sheet
   const pod = new Sprite({
     image: 'plasmapods.jpg',
@@ -332,6 +325,13 @@ const makeLevel = (level = 0) => {
 };
 
 const ready = () => {
+  // Create the title
+  new Label({
+    text: 'ETERNAL ORBS',
+    size: 110,
+    font: 'Honk',
+  }).pos(0, 50, CENTER);
+
   // Leader board
   const leaderBoard = new LeaderBoard({
     corner: 0,
