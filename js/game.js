@@ -318,8 +318,8 @@ const makeLevel = (level = 0) => {
       if (!muted) {
         wrongSound.play();
       }
-      // Make the pod smaller
-      event.target.sca(0.5);
+      // Add 10 seconds to the timer
+      timer.time += 10;
     }
   });
 };
