@@ -31,6 +31,9 @@ const levelSizes = [
   [8, 11],
 ];
 let muted = false;
+let leaderBoard;
+let playButton;
+let totalTime = 0;
 
 // Create an emitter to use when selecting pods
 const emitter = new Emitter({
@@ -158,6 +161,10 @@ const makeLevel = (level = 0) => {
     file: 'wallend',
     volume: 0.3,
   });
+  const endSound = new Aud({
+    file: 'submit',
+    volume: 0.3,
+  });
   let backgroundSoundInstance = backgroundSound.play();
   if (muted) {
     backgroundSoundInstance.fade(0);
@@ -193,7 +200,7 @@ const makeLevel = (level = 0) => {
   const timer = new Timer({
     backgroundColor: new GradientColor([yellow, red], 90),
     down: false,
-    time: 0,
+    time: totalTime,
   });
   const bottom = new Tile({
     obj: [mute, find, timer],
@@ -244,6 +251,9 @@ const makeLevel = (level = 0) => {
         // Stop the timer
         timer.stop();
 
+        // Add time to the total time
+        totalTime += timer.time;
+
         // Stop background sound
         backgroundSoundInstance.fade(0);
 
@@ -293,8 +303,27 @@ const makeLevel = (level = 0) => {
           rewind: true,
           call: target => {
             target.dispose();
-            // Advance to the next level
-            makeLevel(level + 1);
+            if (level === levelSizes.length - 1) {
+              // Play the end sound
+              if (!muted) {
+                endSound.play();
+              }
+
+              // Add the time to the leader board
+              leaderBoard.score(totalTime);
+
+              // Clear screen
+              bottom.removeFrom();
+              pods.dispose();
+              rings.dispose();
+
+              // Show the leader board and play button
+              leaderBoard.addTo();
+              playButton.addTo();
+            } else {
+              // Advance to the next level
+              makeLevel(level + 1);
+            }
           },
         });
 
@@ -333,7 +362,7 @@ const ready = () => {
   }).pos(0, 50, CENTER);
 
   // Leader board
-  const leaderBoard = new LeaderBoard({
+  leaderBoard = new LeaderBoard({
     corner: 0,
     backgroundColor: dark,
     titleColor: light,
@@ -345,19 +374,19 @@ const ready = () => {
     .mov(0, 20);
 
   // Play button
-  const play = new Button({
+  playButton = new Button({
     label: 'PLAY',
     backgroundColor: new GradientColor([orange, purple], 90),
   })
     .pos(0, 40, CENTER, BOTTOM)
     .tap(() => {
       leaderBoard.removeFrom();
-      play.removeFrom();
+      playButton.removeFrom();
       makeLevel();
     });
 
   leaderBoard.on('close', () => {
-    play.removeFrom();
+    playButton.removeFrom();
     makeLevel();
   });
 };
