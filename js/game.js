@@ -1,6 +1,9 @@
 // Assets to load
-const assets = ['plasmapods.jpg'];
-const path = 'https://zimjs.org/assets/';
+const assets = ['plasmapods.jpg', 'gf_Honk'];
+const path = 'https://zimjs.com/assets/';
+
+// Show the progress of loading assets
+const progress = new Waiter();
 
 // Game variables
 const levelSizes = [
@@ -42,6 +45,13 @@ const makeLevel = (level = 0) => {
     // We have no more levels, so do something
     return;
   }
+
+  // Create the title
+  new Label({
+    text: 'ETERNAL ORBS',
+    size: 110,
+    font: 'Honk',
+  }).pos(0, 50, CENTER);
 
   // Pods sprite sheet
   const pod = new Sprite({
@@ -231,4 +241,5 @@ new Frame({
   ready,
   assets,
   path,
+  progress,
 });
