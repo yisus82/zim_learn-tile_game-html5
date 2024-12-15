@@ -71,7 +71,7 @@ const makeLevel = (level = 0) => {
 
   // Animate the pods in
   pods.alp(0).animate({
-    wait: level === 0 ? 0 : 1,
+    wait: level === 0 ? 0 : 3.5,
     props: {
       alpha: 1,
     },
@@ -158,7 +158,36 @@ const makeLevel = (level = 0) => {
           props: {
             alpha: 0,
           },
+          wait: 1,
           time: 0.5,
+          call: target => {
+            target.dispose();
+          },
+        });
+
+        // Show the eternals
+        const showcase = new Tile({
+          obj: pod.clone().sca(1.5),
+          cols: 2,
+          rows: 3,
+          spacingH: 20,
+          spacingV: 20,
+          count: numEternals,
+        }).center();
+        showcase.loop((pod, i) => {
+          pod.run({
+            startFrame: eternalsFrames[i],
+            endFrame: eternalsFrames[i],
+          });
+        });
+        showcase.alp(0).animate({
+          props: {
+            alpha: 1,
+          },
+          wait: 1.5,
+          time: 0.5,
+          rewindWait: 1,
+          rewind: true,
           call: target => {
             target.dispose();
           },
